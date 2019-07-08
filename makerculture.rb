@@ -1,0 +1,222 @@
+# frozen_string_literal: true
+require 'discordrb'
+require 'time'
+require 'fileutils'
+require 'logger'
+
+
+=begin
+== Todo ==
+- logging for each server/channel/pm
+- create a github repo
+- maybe look into a discord bridge between two other things, or IRC maybe
+- see can I get it into upshift or the IT PaaS cluster
+
+== Done ==
+- add support for authorised users, more than one etc
+- add support for commands via private messages
+- maybe create a docker image
+=end
+@token = ARGV[0]
+puts "missing Discord API Token, call with: 'ruby makerculture.rb <DISCORD_API_TOKEN>'" && exit(0) if @token.nil?
+
+
+# This statement creates a bot with the specified token and application ID. After this line, you can add events to the
+# created bot, and eventually run it.
+#
+# If you don't yet have a token to put in here, you will need to create a bot account here:
+#   https://discordapp.com/developers/applications
+# If you're wondering about what redirect URIs and RPC origins, you can ignore those for now. If that doesn't satisfy
+# you, look here: https://github.com/meew0/discordrb/wiki/Redirect-URIs-and-RPC-origins
+# After creating the bot, simply copy the token (*not* the OAuth2 secret) and put it into the
+# respective place.
+bot = Discordrb::Commands::CommandBot.new token: @token, prefix: '!'
+ADMINS = [268539077089951754]
+@role_list = {}
+
+
+
+@logger = Logger.new(STDOUT)
+#@logger = Logger.new('mc_event.log', 10, 1024000)
+@logger.level = Logger::DEBUG
+
+
+# Here we output the invite URL to the console so the bot account can be invited to the channel. This only has to be
+# done once, afterwards, you can remove this part if you want
+@logger.debug "This bot's invite URL is #{bot.invite_url}."
+@logger.debug 'Click on it to invite it to your server.'
+
+
+startup = Time.now
+@logger.debug "Starting up at #{startup}"
+# Determine how long ago the bot started running.
+def relative_time(start_time)
+  response = ""
+  diff_seconds = Time.now - start_time
+  case diff_seconds
+    when 0 .. 59
+      response = "#{diff_seconds} seconds ago"; @logger.debug response
+    when 60 .. (3600-1)
+      response = "#{diff_seconds/60} minutes ago"; @logger.debug response
+    when 3600 .. (3600*24-1)
+      response = "#{diff_seconds/3600} hours ago"; @logger.debug respose
+    when (3600*24) .. (3600*24*30) 
+      response = "#{diff_seconds/(3600*24)} days ago"; @logger.debug respose
+    else
+      response = start_time.strftime("%m/%d/%Y"); @logger.debug respose
+  end
+  return response
+end
+
+
+# Here we can see the `help_available` property used, which can determine whether a command shows up in the default
+# generated `help` command. It is true by default but it can be set to false to hide internal commands that only
+# specific people can use.
+bot.command(:exit, help_available: false) do |event|
+  # This is a check that only allows a user with a specific ID to execute this command. Otherwise, everyone would be
+  # able to shut your bot down whenever they wanted.
+  @logger.debug "Command: exit"
+  break unless ADMINS.include?(event.user.id)
+  @logger.debug "Authorised user #{event.user.username}"
+  bot.send_message(event.channel.id, 'Bot is shutting down')
+  exit
+end
+
+
+# Here we can see the `help_available` property used, which can determine whether a command shows up in the default
+# generated `help` command. It is true by default but it can be set to false to hide internal commands that only
+# specific people can use.
+bot.command(:uptime, description: "Prints the length of time that the bot has been running.", usage: "!uptime") do |event|
+  # This is a check that only allows a user with a specific ID to execute this command. Otherwise, everyone would be
+  # able to shut your bot down whenever they wanted.
+  @logger.debug "Command: uptime"
+  break unless ADMINS.include?(event.user.id)
+  @logger.debug "Authorised user #{event.user.username}"
+  bot.send_message(event.channel.id, "Bot started at #{startup}")
+  bot.send_message(event.channel.id, "That was #{relative_time(startup)}")
+end
+
+
+# Ping/Pong
+bot.command(:ping, description: "Ping the bot and have it respond with a Pong!", usage: "!ping") do |event|
+  # The `respond` method returns a `Message` object, which is stored in a variable `m`. The `edit` method is then called
+  # to edit the message with the time difference between when the event was received and after the message was sent.
+  @logger.debug "event.user.id #{event.user.id}"
+  m = event.respond('Pong!')
+  m.edit "Pong! Time taken: #{Time.now - event.timestamp} seconds."
+end
+
+
+# Have the bot poke yourself, or others. eg: !poke / !poke <name>
+bot.command(:poke, description: "The bot will poke the user specified as a parameter", usage: "!poke <user>") do |event, args|
+  m = event.respond("Poke! #{args}")
+end
+
+
+# Print the invite URL for the bot
+bot.command(:invite, description: "Print the bot invite URL", usage: "!invite", chain_usable: false) do |event|
+  # This simply sends the bot's invite URL, without any specific permissions,
+  # to the channel.
+  event.bot.invite_url
+end
+
+
+# Print the list of roles which maybe applied to the caller. Each role can unlock a set of channels which the user is interested in.
+bot.command(:list_roles, description: "List the available roles which can be applied to you", usage: "!list_roles") do |event|
+  break unless ADMINS.include?(event.user.id)
+  @logger.debug "Authorised user #{event.user.username}"
+  unless event.channel.type == Discordrb::Channel::TYPES[:dm]
+    roles = event.server.roles
+    index = 1
+
+    response = "```\n"
+    roles.each do |i|
+      role = i.name.gsub(/@/, "[at]")
+      response +=  "#{index}: " + role + "\n"
+      @role_list[role] = i 
+      if index % 3 == 0 || index == roles.length
+	sleep(1)
+        response += "```"
+	@logger.debug response
+        event.respond(response)
+        response = "```\n"
+      end
+      index += 1
+    end
+    break
+    #response += "```"
+    #@logger.debug response
+    #event.respond(response) unless index % 3 == 0
+  end
+end
+
+
+# Print the list of roles which maybe applied to the caller. Each role can unlock a set of channels which the user is interested in.
+bot.command(:add_roles, description: "Add a role to the caller, or user specified by target", usage: "!add_roles <user> <role>") do |event|
+  break unless ADMINS.include?(event.user.id)
+  @logger.debug "Authorised user #{event.user.username}"
+  unless event.channel.type == Discordrb::Channel::TYPES[:dm]
+    response = ""
+    content = event.message.content.split(" ")
+    @logger.debug content
+    @logger.debug event.message.content
+    @logger.debug event.message.channel.name
+    @logger.debug event.message.author.name
+    response = "User: <@#{event.message.author.id}> wants to add role: #{content[2]} to: #{content[1]}"
+    event.respond(response)
+
+    role_exist = @role_list.keys.include?(content[2])
+    @logger.debug @role_list.keys
+
+    response = "Role #{content[2]} exists? #{role_exist}"
+    event.respond(response)
+  end
+  break
+end
+
+
+
+bot.reaction_add do |event|
+  @logger.debug "Discordrb::Events::ReactionAddEvent"
+  @logger.debug event.emoji.inspect
+  @logger.debug event.message
+  @logger.debug event.emoji.to_reaction
+
+  event.respond "emoji add event #{event.emoji.mention}"
+end
+
+bot.reaction_remove do |event|
+  @logger.debug "Discordrb::Events::ReactionRemoveEvent"
+  @logger.debug event.emoji.inspect
+  @logger.debug event.message
+  @logger.debug event.emoji.to_reaction
+
+  event.respond "emoji remove eventi #{event.emoji.mention}"
+end
+
+
+
+# Logging
+bot.message do |event|
+  begin
+    unless event.channel.type == Discordrb::Channel::TYPES[:dm]
+      @logger.debug "event.server.id #{event.server.id}"
+    end
+    @logger.debug "event.channel.id #{event.channel.id}"
+    @logger.debug "event.channel.type #{event.channel.type}"
+    @logger.debug "event.user.id #{event.user.id}"
+    @logger.debug "event.content #{event.content}"
+  rescue Exception => e
+    @logger.debug e.inspect
+    @logger.debug event.inspect
+  end
+
+  if (event.content.include? "pizza" and event.content.include? "pineapple")
+    event.respond "Pineapple is a perfectly reasonable topping for a pizza imo."
+  end
+end
+
+
+# This method call has to be put at the end of your script, it is what makes the bot actually connect to Discord. If you
+# leave it out (try it!) the script will simply stop and the bot will not appear online.
+bot.run

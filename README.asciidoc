@@ -1,0 +1,20 @@
+== Makerculture Discord Bot ==
+This Discord bot is built using https://github.com/meew0/discordrb and requires a Discord Bot token. If you don't yet have a token to put in here, you will need to create a bot account here: https://discordapp.com/developers/applications
+
+Once you have the token place it into a file named *discord_token.txt*
+
+
+=== Build it ===
+To build the docker image ues the following:
+
+----
+make image/build
+----
+
+
+=== Run it ===
+To run the bot then, once the *discord_token.txt* file has been populated, it will be picked up and passed into the container automatically. Simply do the following to run the bot:
+
+----
+make run
+----
