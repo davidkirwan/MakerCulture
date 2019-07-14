@@ -178,11 +178,18 @@ end
 
 bot.reaction_add do |event|
   @logger.debug "Discordrb::Events::ReactionAddEvent"
+  @logger.debug event.user.name
   @logger.debug event.emoji.inspect
   @logger.debug event.message
   @logger.debug event.emoji.to_reaction
 
-  event.respond "emoji add event #{event.emoji.mention}"
+  if event.message.id == 571057326656585763 && event.emoji.name == "✅"
+    @logger.debug "Rules post"
+    role = event.server.roles.find {|r| r.name == "Maker"}
+    event.user.add_role(role)
+  end
+
+  #event.respond "emoji add event #{event.emoji.mention}"
 end
 
 bot.reaction_remove do |event|
@@ -191,7 +198,7 @@ bot.reaction_remove do |event|
   @logger.debug event.message
   @logger.debug event.emoji.to_reaction
 
-  event.respond "emoji remove eventi #{event.emoji.mention}"
+  # event.respond "emoji remove event #{event.emoji.mention}"
 end
 
 
