@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: makerculture-deployment
+  labels:
+    app: makerculture
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: makerculture
+  template:
+    metadata:
+      labels:
+        app: makerculture
+    spec:
+      containers:
+      - name: makerculture
+        env:
+        - name: DISCORD_TOKEN
+          valueFrom:
+            configMapKeyRef:
+              name: makerculture-token
+              key: discord_token.txt
+        image: quay.io/dkirwan_redhat/makerculture:0.0.2 
+        imagePullPolicy: Always
+        command: ["/bin/sh", "-c"]
+        args: ["ruby /app/makerculture.rb $(DISCORD_TOKEN)"]
