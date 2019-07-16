@@ -4,17 +4,54 @@ This Discord bot is built using https://github.com/meew0/discordrb and requires 
 Once you have the token place it into a file named *discord_token.txt*
 
 
-=== Build it ===
-To build the docker image ues the following:
+=== Deploy on Kubernetes/Openshift ===
+To deploy the bot onto Kubernetes/Openshift, ensure you are first logged into the cluster. Create a project/namespace called _makerculture_. eg:
+
+----
+oc new-project makerculture
+
+# or 
+kubectl create namespace makerculture
+----
+
+Then get your discord token, and replace the value _XXXX_ with the token inside the _kubernetes/discord_token_configmap.yaml_ file. Then create 
+the configmap with:
+
+----
+oc apply -f kubernetes/discord_token_configmap.yaml
+
+# or 
+kubectl apply -f kubernetes/discord_token_configmap.yaml
+----
+
+Then create the deployment for the bot via:
+
+----
+oc apply -f kubernetes/deployment.yaml
+
+# or 
+kubectl apply -f kubernetes/deployment.yaml
+----
+
+This should bring up a pod which run the bot.
+
+
+=== Local Dev ===
+For local development the following few commands can come in useful.
+
+==== Build it ====
+To build the docker image use the following:
 
 ----
 make image/build
 ----
 
 
-=== Run it ===
+==== Run it ====
 To run the bot then, once the *discord_token.txt* file has been populated, it will be picked up and passed into the container automatically. Simply do the following to run the bot:
 
 ----
 make run
 ----
+
+
