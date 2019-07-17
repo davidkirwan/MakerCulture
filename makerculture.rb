@@ -8,11 +8,14 @@ require 'logger'
 =begin
 == Todo ==
 - logging for each server/channel/pm
-- create a github repo
+- Could look into getting a persistant volume + claim configuration in place for storing logs eventually
 - maybe look into a discord bridge between two other things, or IRC maybe
-- see can I get it into upshift or the IT PaaS cluster
+- the @roles_list is implemented badly, do a get query first before the check for existance when adding a role to a user
 
 == Done ==
+- find a host to run the bot
+- create a github repo
+- add support for adding default roles to users who accept the rules
 - add support for authorised users, more than one etc
 - add support for commands via private messages
 - maybe create a docker image
@@ -135,9 +138,9 @@ bot.command(:list_roles, description: "List the available roles which can be app
       response +=  "#{index}: " + role + "\n"
       @role_list[role] = i 
       if index % 3 == 0 || index == roles.length
-	sleep(1)
+        sleep(1)
         response += "```"
-	@logger.debug response
+        @logger.debug response
         event.respond(response)
         response = "```\n"
       end
@@ -178,13 +181,13 @@ end
 
 bot.reaction_add do |event|
   @logger.debug "Discordrb::Events::ReactionAddEvent"
-  @logger.debug event.user.name
-  @logger.debug event.emoji.inspect
-  @logger.debug event.message
-  @logger.debug event.emoji.to_reaction
+  #@logger.debug event.user.name
+  #@logger.debug event.emoji.inspect
+  #@logger.debug event.message
+  #@logger.debug event.emoji.to_reaction
 
   if event.message.id == 571057326656585763 && event.emoji.name == "✅"
-    @logger.debug "Rules post"
+    @logger.debug "Adding role Maker to user: #{event.user.name}"
     role = event.server.roles.find {|r| r.name == "Maker"}
     event.user.add_role(role)
   end
@@ -194,9 +197,9 @@ end
 
 bot.reaction_remove do |event|
   @logger.debug "Discordrb::Events::ReactionRemoveEvent"
-  @logger.debug event.emoji.inspect
-  @logger.debug event.message
-  @logger.debug event.emoji.to_reaction
+  #@logger.debug event.emoji.inspect
+  #@logger.debug event.message
+  #@logger.debug event.emoji.to_reaction
 
   # event.respond "emoji remove event #{event.emoji.mention}"
 end
