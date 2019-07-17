@@ -22,7 +22,7 @@ spec:
             configMapKeyRef:
               name: makerculture-token
               key: discord_token.txt
-        image: quay.io/dkirwan_redhat/makerculture:0.0.2 
+        image: quay.io/dkirwan_redhat/makerculture:0.0.3
         imagePullPolicy: IfNotPresent
         command: ["/bin/sh", "-c"]
         args: ["ruby /app/makerculture.rb $(DISCORD_TOKEN)"]
