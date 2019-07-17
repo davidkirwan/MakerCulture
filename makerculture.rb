@@ -59,11 +59,11 @@ def relative_time(start_time)
     when 60 .. (3600-1)
       response = "#{diff_seconds/60} minutes ago"; @logger.debug response
     when 3600 .. (3600*24-1)
-      response = "#{diff_seconds/3600} hours ago"; @logger.debug respose
+      response = "#{diff_seconds/3600} hours ago"; @logger.debug response
     when (3600*24) .. (3600*24*30) 
-      response = "#{diff_seconds/(3600*24)} days ago"; @logger.debug respose
+      response = "#{diff_seconds/(3600*24)} days ago"; @logger.debug response
     else
-      response = start_time.strftime("%m/%d/%Y"); @logger.debug respose
+      response = start_time.strftime("%m/%d/%Y"); @logger.debug response
   end
   return response
 end
