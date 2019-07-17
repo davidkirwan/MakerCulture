@@ -92,8 +92,8 @@ bot.command(:uptime, description: "Prints the length of time that the bot has be
   @logger.debug "Command: uptime"
   break unless ADMINS.include?(event.user.id)
   @logger.debug "Authorised user #{event.user.username}"
-  bot.send_message(event.channel.id, "Bot started at #{startup}")
-  bot.send_message(event.channel.id, "That was #{relative_time(startup)}")
+  event.respond("Bot started at #{startup}")
+  event.respond("That was #{relative_time(startup)}")
 end
 
 
