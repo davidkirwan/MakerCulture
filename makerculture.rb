@@ -8,13 +8,17 @@ require 'logger'
 =begin
 == Todo ==
 - logging for each server/channel/pm
+- Get imagestreams setup, or whatever the kubernetes equivalent is (if it exists yet)
 - Could look into getting a persistant volume + claim configuration in place for storing logs eventually
 - maybe look into a discord bridge between two other things, or IRC maybe
 - the @roles_list is implemented badly, do a get query first before the check for existance when adding a role to a user
+- Break out the code into a separate library and create an API to access etc
+
 
 == Done ==
 - find a host to run the bot
 - create a github repo
+- add command for printing the url to the github repo
 - add support for adding default roles to users who accept the rules
 - add support for authorised users, more than one etc
 - add support for commands via private messages
@@ -123,6 +127,14 @@ bot.command(:invite, description: "Print the bot invite URL", usage: "!invite", 
   event.bot.invite_url
 end
 
+
+
+# Print the Github/Codebase URL for the bot
+bot.command(:github, description: "Print the URL to the bots codebase", usage: "!github", chain_usable: false) do |event|
+  # This simply sends the bot's invite URL, without any specific permissions,
+  # to the channel.
+  event.respond("https://github.com/davidkirwan/MakerCulture")
+end
 
 # Print the list of roles which maybe applied to the caller. Each role can unlock a set of channels which the user is interested in.
 bot.command(:list_roles, description: "List the available roles which can be applied to you", usage: "!list_roles") do |event|
