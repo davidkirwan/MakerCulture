@@ -25,4 +25,11 @@ spec:
         image: quay.io/dkirwan_redhat/makerculture:0.0.4
         imagePullPolicy: IfNotPresent
         command: ["/bin/sh", "-c"]
+        volumeMounts:
+        - name: logs-pv-storage
+          mountPath: /tmp/logs
         args: ["ruby /app/makerculture.rb $(DISCORD_TOKEN)"]
+      volumes:
+      - name: logs-pv-storage
+        persistentVolumeClaim:
+          claimName: logs-pv-claim
