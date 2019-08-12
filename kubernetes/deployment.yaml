@@ -32,7 +32,7 @@ spec:
         schedulerName: default-scheduler
         volumeMounts:
         - name: logs-pv-storage
-          mountPath: /tmp/logs
+          mountPath: /app/logs
         args: ["ruby /app/makerculture.rb $(DISCORD_TOKEN)"]
       volumes:
       - name: logs-pv-storage
