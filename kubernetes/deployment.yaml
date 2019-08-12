@@ -14,6 +14,9 @@ spec:
       labels:
         app: makerculture
     spec:
+      securityContext:
+        runAsUser: 1010420000
+        fsGroup: 1010420000
       containers:
       - name: makerculture
         env:
@@ -25,6 +28,8 @@ spec:
         image: quay.io/dkirwan_redhat/makerculture:0.0.4
         imagePullPolicy: IfNotPresent
         command: ["/bin/sh", "-c"]
+        restartPolicy: Always
+        schedulerName: default-scheduler
         volumeMounts:
         - name: logs-pv-storage
           mountPath: /tmp/logs
