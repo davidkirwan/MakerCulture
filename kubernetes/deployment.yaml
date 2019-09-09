@@ -19,6 +19,8 @@ spec:
         fsGroup: 1010420000
       containers:
       - name: makerculture
+        securityContext:
+          runAsUser: 1010420000
         env:
         - name: DISCORD_TOKEN
           valueFrom:
