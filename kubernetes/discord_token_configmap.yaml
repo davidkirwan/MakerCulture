@@ -1,18 +1,9 @@
 apiVersion: v1
-items:
-- apiVersion: v1
-  data:
-    discord_token.txt: |
-      XXXX
-  kind: ConfigMap
-  metadata:
-    creationTimestamp: 2019-07-16T12:17:56Z
-    name: makerculture-token
-    namespace: makerculture
-    resourceVersion: "541947578"
-    selfLink: /api/v1/namespaces/makerculture/configmaps/makerculture-token
-    uid: be3d5bc2-a7c3-11e9-8d9e-06d3e3320f22
-kind: List
+data:
+  discord_token.txt: |
+    XXXXXX
+kind: ConfigMap
 metadata:
-  resourceVersion: ""
-  selfLink: ""
+  creationTimestamp: null
+  name: makerculture-token
+  selfLink: /api/v1/namespaces/makerculture/configmaps/makerculture-token
