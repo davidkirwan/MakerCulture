@@ -22,10 +22,15 @@ spec:
         securityContext:
           runAsUser: 1010420000
         env:
+        - name: GAB_TOKEN
+          valueFrom:
+            configMapKeyRef:
+              name: makerculture-gab-token
+              key: gab_token.txt
         - name: DISCORD_TOKEN
           valueFrom:
             configMapKeyRef:
-              name: makerculture-token
+              name: makerculture-discord-token
               key: discord_token.txt
         image: quay.io/dkirwan_redhat/makerculture:0.0.4
         imagePullPolicy: IfNotPresent
@@ -35,7 +40,7 @@ spec:
         volumeMounts:
         - name: logs-pv-storage
           mountPath: /app/logs
-        args: ["ruby /app/makerculture.rb $(DISCORD_TOKEN)"]
+        args: ["ruby /app/makerculture.rb $(DISCORD_TOKEN) $(GAB_TOKEN)"]
       volumes:
       - name: logs-pv-storage
         persistentVolumeClaim:

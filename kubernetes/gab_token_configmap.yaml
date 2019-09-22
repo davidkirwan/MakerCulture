@@ -1,0 +1,9 @@
+apiVersion: v1
+data:
+  gab_token.txt: |
+    XXXXXX
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: makerculture-gab-token
+  selfLink: /api/v1/namespaces/makerculture/configmaps/makerculture-gab-token

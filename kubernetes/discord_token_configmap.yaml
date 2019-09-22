@@ -5,5 +5,5 @@ data:
 kind: ConfigMap
 metadata:
   creationTimestamp: null
-  name: makerculture-token
-  selfLink: /api/v1/namespaces/makerculture/configmaps/makerculture-token
+  name: makerculture-discord-token
+  selfLink: /api/v1/namespaces/makerculture/configmaps/makerculture-discord-token

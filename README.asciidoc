@@ -19,9 +19,11 @@ the configmap with:
 
 ----
 oc apply -f kubernetes/discord_token_configmap.yaml
+oc apply -f kubernetes/gab_token_configmap.yaml
 
 # or 
 kubectl apply -f kubernetes/discord_token_configmap.yaml
+kubectl apply -f kubernetes/gab_token_configmap.yaml
 ----
 
 Then create the deployment for the bot via:

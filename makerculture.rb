@@ -4,6 +4,12 @@ require 'time'
 require 'fileutils'
 require 'logger'
 
+lib = File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+require 'makerculture'
+
+
+
 
 =begin
 == Todo
@@ -15,6 +21,7 @@ require 'logger'
 - Configure bot via config file or via command to set admins/curators
 - Integrate with social media, Tumblr/Twitter/Minds/Gab/Instagram/Pinterest maybe to find pictures or posts of interest to the various room topics.
 - Eventually release the bot to allow it to be invited to multiple servers, and run simulataneously.
+- figure out how to have users authenticate with their own api keys rather than using mine when posting to a gab group
 
 == Done
 - Could look into getting a persistant volume + claim configuration in place for storing logs eventually
@@ -26,9 +33,13 @@ require 'logger'
 - add support for commands via private messages
 - maybe create a docker image
 =end
-@token = ARGV[0]
-puts "missing Discord API Token, call with: 'ruby makerculture.rb <DISCORD_API_TOKEN>'" && exit(0) if @token.nil?
-
+@discord_token = ARGV[0]
+@gab_token = ARGV[1]
+if @discord_token.nil? 
+  puts "missing Discord API Token, call with: 'ruby makerculture.rb <DISCORD_API_TOKEN>'" 
+  exit(0)
+end
+puts "Gab token not supplied (Optional)" if @gab_token.nil?
 
 # This statement creates a bot with the specified token and application ID. After this line, you can add events to the
 # created bot, and eventually run it.
@@ -39,9 +50,14 @@ puts "missing Discord API Token, call with: 'ruby makerculture.rb <DISCORD_API_T
 # you, look here: https://github.com/meew0/discordrb/wiki/Redirect-URIs-and-RPC-origins
 # After creating the bot, simply copy the token (*not* the OAuth2 secret) and put it into the
 # respective place.
-bot = Discordrb::Commands::CommandBot.new token: @token, prefix: '!'
+bot = Discordrb::Commands::CommandBot.new token: @discord_token, prefix: '!'
 ADMINS = [268539077089951754]
 @role_list = {}
+
+# Configure the Mastodon client
+unless @gab_token.nil?
+  Makerculture::Mastodon.setup(@gab_token)
+end
 
 
 @logger = Logger.new(STDOUT)
@@ -190,6 +206,14 @@ bot.command(:add_roles, description: "Add a role to the caller, or user specifie
   break
 end
 
+
+# Print the version of the bot.
+bot.command(:version, description: "Print the version of the Makerculture bot", usage: "!version") do |event|
+  break unless ADMINS.include?(event.user.id)
+  @logger.debug "Authorised user #{event.user.username}"
+
+  event.respond("Makerculture Version: #{Makerculture::Version.to_s}")
+end
 
 
 bot.reaction_add do |event|
