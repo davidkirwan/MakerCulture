@@ -32,7 +32,7 @@ spec:
             configMapKeyRef:
               name: makerculture-discord-token
               key: discord_token.txt
-        image: quay.io/dkirwan_redhat/makerculture:0.0.4
+        image: quay.io/dkirwan_redhat/makerculture:0.0.5
         imagePullPolicy: IfNotPresent
         command: ["/bin/sh", "-c"]
         restartPolicy: Always
