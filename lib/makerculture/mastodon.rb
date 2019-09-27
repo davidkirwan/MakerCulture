@@ -1,8 +1,8 @@
 require "mastodon"
 
 module Makerculture
-  module Mastodon
-  
+  module Mammoth
+  class << self 
     attr_accessor :client, :token
 
     def setup(token)
@@ -24,5 +24,6 @@ module Makerculture
       end
     end
 
+  end
   end
 end

@@ -32,15 +32,15 @@ spec:
             configMapKeyRef:
               name: makerculture-discord-token
               key: discord_token.txt
-        image: quay.io/dkirwan_redhat/makerculture:0.0.5
-        imagePullPolicy: IfNotPresent
-        command: ["/bin/sh", "-c"]
+        image: quay.io/dkirwan_redhat/makerculture:0.0.7
+        imagePullPolicy: Always
+        command: ["/bin/sh"]
         restartPolicy: Always
         schedulerName: default-scheduler
         volumeMounts:
         - name: logs-pv-storage
           mountPath: /app/logs
-        args: ["ruby /app/makerculture.rb $(DISCORD_TOKEN) $(GAB_TOKEN)"]
+        args: ["-c", "bundle", "exec", "ruby", "/app/makerculture.rb", "$(DISCORD_TOKEN)", "$(GAB_TOKEN)"]
       volumes:
       - name: logs-pv-storage
         persistentVolumeClaim:

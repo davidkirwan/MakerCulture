@@ -33,8 +33,11 @@ require 'makerculture'
 - add support for commands via private messages
 - maybe create a docker image
 =end
+puts ARGV.inspect
 @discord_token = ARGV[0]
 @gab_token = ARGV[1]
+puts @discord_token
+puts @gab_token
 if @discord_token.nil? 
   puts "missing Discord API Token, call with: 'ruby makerculture.rb <DISCORD_API_TOKEN>'" 
   exit(0)
@@ -55,8 +58,9 @@ ADMINS = [268539077089951754]
 @role_list = {}
 
 # Configure the Mastodon client
+GABGROUP = 23
 unless @gab_token.nil?
-  Makerculture::Mastodon.setup(@gab_token)
+  Makerculture::Mammoth.setup(@gab_token)
 end
 
 
@@ -241,6 +245,14 @@ bot.reaction_remove do |event|
   # event.respond "emoji remove event #{event.emoji.mention}"
 end
 
+
+# Have the bot post the contents of your post to a gab group.
+bot.command(:gab, description: "The bot will post the message to a gab group", usage: "!gab <msg>") do |event, args|
+  break unless ADMINS.include?(event.user.id)
+  @logger.debug "Authorised user #{event.user.username}"
+  post = Makerculture::Mammoth.post(args, GABGROUP)
+  m = event.respond("Post: #{post}")
+end
 
 
 # Logging
