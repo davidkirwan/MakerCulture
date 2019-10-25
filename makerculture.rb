@@ -8,31 +8,6 @@ lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'makerculture'
 
-
-
-
-=begin
-== Todo
-- logging for each server/channel/pm
-- Get imagestreams setup, or whatever the kubernetes equivalent is (if it exists yet)
-- maybe look into a discord bridge between two other things, or IRC maybe
-- the @roles_list is implemented badly, do a get query first before the check for existance when adding a role to a user
-- Break out the code into a separate library and create an API to access etc
-- Configure bot via config file or via command to set admins/curators
-- Integrate with social media, Tumblr/Twitter/Minds/Gab/Instagram/Pinterest maybe to find pictures or posts of interest to the various room topics.
-- Eventually release the bot to allow it to be invited to multiple servers, and run simulataneously.
-- figure out how to have users authenticate with their own api keys rather than using mine when posting to a gab group
-
-== Done
-- Could look into getting a persistant volume + claim configuration in place for storing logs eventually
-- find a host to run the bot
-- create a github repo
-- add command for printing the url to the github repo
-- add support for adding default roles to users who accept the rules
-- add support for authorised users, more than one etc
-- add support for commands via private messages
-- maybe create a docker image
-=end
 puts ARGV.inspect
 @discord_token = ARGV[0]
 @gab_token = ARGV[1]
