@@ -250,7 +250,29 @@ bot.message do |event|
   end
 end
 
+@health = Thread.new do
+  begin
+    loop do
+      sleep(15)
+      if bot.connected?
+	system("touch /tmp/healthy")
+	@logger.debug "connected"
+      else
+	system("rm /tmp/healthy")
+	raise Exception, "not connected"
+      end
+    end
+
+  rescue Exception => e
+    @logger.debug e.message
+    @health.kill
+    @health = nil
+    exit
+  end
+end
 
 # This method call has to be put at the end of your script, it is what makes the bot actually connect to Discord. If you
 # leave it out (try it!) the script will simply stop and the bot will not appear online.
 bot.run
+
+

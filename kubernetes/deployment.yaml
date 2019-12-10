@@ -32,7 +32,7 @@ spec:
             configMapKeyRef:
               name: makerculture-discord-token
               key: discord_token.txt
-        image: quay.io/dkirwan_redhat/makerculture:0.0.7
+        image: quay.io/dkirwan_redhat/makerculture:0.0.8
         imagePullPolicy: Always
         command: ["bundle"]
         restartPolicy: Always
@@ -41,6 +41,13 @@ spec:
         - name: logs-pv-storage
           mountPath: /app/logs
         args: ["exec", "ruby", "/app/makerculture.rb", "$(DISCORD_TOKEN)", "$(GAB_TOKEN)"]
+        livenessProbe:
+          exec:
+            command:
+            - cat
+            - /tmp/healthy
+          initialDelaySeconds: 15
+          periodSeconds: 60
       volumes:
       - name: logs-pv-storage
         persistentVolumeClaim:

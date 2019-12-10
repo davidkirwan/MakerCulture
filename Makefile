@@ -2,7 +2,7 @@ ORG ?= dkirwan_redhat
 PROJECT ?= makerculture
 REG=quay.io
 SHELL=/bin/bash
-TAG ?= 0.0.7
+TAG ?= 0.0.8
 PKG=github.com/davidkirwan/makerculture
 PWD=$(shell pwd)
 DISCORD_TOKEN=$(shell cat discord_token.txt)
@@ -19,13 +19,13 @@ list:
 
 .PHONY: image/build
 image/build:
-	docker image build -t "${REG}/${ORG}/${PROJECT}:${TAG}" .
+	podman image build -t "${REG}/${ORG}/${PROJECT}:${TAG}" .
 
 .PHONY: image/push
 image/push:
-	docker push ${REG}/${ORG}/${PROJECT}:${TAG}
+	podman push ${REG}/${ORG}/${PROJECT}:${TAG}
 
 .PHONY: run
 run:
-	docker run --rm -it -p 0.0.0.0:3000:3000 -v $(PWD):/root/src --name makerculture ${REG}/${ORG}/${PROJECT}:${TAG} $(DISCORD_TOKEN)
+	podman run --rm -it -p 0.0.0.0:3000:3000 -v $(PWD):/root/src --name makerculture ${REG}/${ORG}/${PROJECT}:${TAG} $(DISCORD_TOKEN)
 
