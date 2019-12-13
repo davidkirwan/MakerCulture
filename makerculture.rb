@@ -250,29 +250,26 @@ bot.message do |event|
   end
 end
 
-@health = Thread.new do
-  begin
-    loop do
-      sleep(15)
-      if bot.connected?
-	system("touch /tmp/healthy")
-	@logger.debug "connected"
-      else
-	system("rm /tmp/healthy")
-	raise Exception, "not connected"
-      end
-    end
+# This is called whenever the bot successfully connects (or reconnects) and starts a
+# new session with Discord. This won't be called for *every* reconnection - sometimes
+# we can reconnect and re-use the previous session.
+bot.ready { system("touch /tmp/healthy") }
 
-  rescue Exception => e
-    @logger.debug e.message
-    @health.kill
-    @health = nil
-    exit
-  end
-end
+# Part of Discord's gateway protocol.
+# This is called whenever we send off our "ping" to keep the connection alive.
+# The protocol dynamically tells us how often this is, but in practice this
+# is currently always every 41.25 seconds. See `EventContainer#heartbeat`
+# for more notes.
+bot.heartbeat { system("touch /tmp/healthy") }
+
+# Self explanatory; Note this is broken in 3.3.0 and is never called.
+# Fixed in master. https://github.com/discordrb/discordrb/pull/611
+# Not sure if I need to build master and try from that..
+# TODO: follow up there, but also need to look at limiting the number of attempts, 
+# need to look just how often this gets called in practice..
+bot.disconnected { system("rm /tmp/healthy") }
+
 
 # This method call has to be put at the end of your script, it is what makes the bot actually connect to Discord. If you
 # leave it out (try it!) the script will simply stop and the bot will not appear online.
 bot.run
-
-
