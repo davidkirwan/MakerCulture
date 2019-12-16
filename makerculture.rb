@@ -267,7 +267,7 @@ bot.heartbeat { system("touch /tmp/healthy") }
 # Not sure if I need to build master and try from that..
 # TODO: follow up there, but also need to look at limiting the number of attempts, 
 # need to look just how often this gets called in practice..
-bot.disconnected { system("rm /tmp/healthy") }
+bot.disconnected { @logger.debug "disconnected" }  #system("rm /tmp/healthy") }
 
 
 # This method call has to be put at the end of your script, it is what makes the bot actually connect to Discord. If you
