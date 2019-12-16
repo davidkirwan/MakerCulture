@@ -1,7 +1,7 @@
 FROM ruby:2.6.5
 MAINTAINER David Kirwan <davidkirwanirl@gmail.com>
 
-ENV LIBSODIUM_VERSION 1.0.16
+ENV LIBSODIUM_VERSION 1.0.17
 
 RUN mkdir /app
 WORKDIR /app
