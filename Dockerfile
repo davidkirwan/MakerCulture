@@ -7,7 +7,7 @@ RUN mkdir /app
 WORKDIR /app
 
 ADD . /app
-RUN bundle install
+RUN bundle install --path /app/bundle/
 
 RUN chmod 755 /app/makerculture.rb
 RUN \
@@ -22,4 +22,4 @@ RUN \
     mv src/libsodium /usr/local/ && \
     rm -Rf /tmpbuild/
 
-ENTRYPOINT ["ruby", "/app/makerculture.rb"]
+ENTRYPOINT ["bundle", "exec", "ruby", "/app/makerculture.rb"]
