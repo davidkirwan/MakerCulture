@@ -45,7 +45,7 @@ For local development the following few commands can come in useful.
 To build the docker image use the following:
 
 ----
-make image/build
+make build
 ----
 
 
