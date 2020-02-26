@@ -7,9 +7,9 @@ Possible ideas for future versions
 - the @roles_list is implemented badly, do a get query first before the check for existance when adding a role to a user
 - Break out the code into a separate library and create an API to access etc
 - Configure bot via config file or via command to set admins/curators
-- Integrate with social media, Tumblr/Twitter/Minds/Fediverse/Instagram/Pinterest maybe to find pictures or posts of interest to the various room topics.
+- Integrate with social media, Reddit/Tumblr/Twitter/Minds/Fediverse/Instagram/Pinterest maybe to find pictures or posts of interest to the various room topics.
 - Eventually release the bot to allow it to be invited to multiple servers, and run simulataneously.
-- figure out how to have users authenticate with their own api keys rather than using mine when posting to a gab group
+- figure out how to have users authenticate with their own api keys rather than using mine when posting to a gab group/other social media etc
 
 
 === 0.0.7
