@@ -11,6 +11,13 @@ Possible ideas for future versions
 - Eventually release the bot to allow it to be invited to multiple servers, and run simulataneously.
 - figure out how to have users authenticate with their own api keys rather than using mine when posting to a gab group/other social media etc
 
+=== 0.0.9
+- Bumped Libsodium to 1.0.17
+
+=== 0.0.8
+- v0.0.8 Moved to Podman from Docker
+- Added liveliness check to the deployment
+- Added connection check to the deployment
 
 === 0.0.7
 - Integreated with Mastodon API. Currently only works with Gab.
