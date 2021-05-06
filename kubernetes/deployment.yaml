@@ -15,12 +15,9 @@ spec:
         app: makerculture
     spec:
       securityContext:
-        runAsUser: 1010420000
-        fsGroup: 1010420000
+        fsGroup: 0
       containers:
       - name: makerculture
-        securityContext:
-          runAsUser: 1010420000
         env:
         - name: GAB_TOKEN
           valueFrom:
